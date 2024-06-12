@@ -10,10 +10,11 @@ import { Toaster } from "@/components/ui/sonner";
 import { SpokeSpinner } from "@/components/ui/spinner";
 import useProducts from "@/hooks/use-products-hook";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Book, Logout } from "@mynaui/icons-react";
 import { ID, Query } from "appwrite";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -39,13 +40,13 @@ async function updateProductQuantity(productName: string, productUnityToSell: an
     )
 }
 
-export default function Homepage(){
+export default function Attendentpage(){
+    const navigate = useNavigate()
+
     const [dataToBill, setDataToBill] = useState({})
-    const [userName, setUserName] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
     const formSchema = z.object({
-        id: z.string().optional(),
         product: z.string().min(4).max(50),
         clientName: z.string().min(4).max(50),
         quantity: z.coerce.number(),
@@ -56,7 +57,6 @@ export default function Homepage(){
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            id: "",
             product: "",
             clientName: "",
             quantity: 0,
@@ -70,7 +70,7 @@ export default function Homepage(){
         const data = {
             type: values.transactionType,
             productName: values.product,
-            owner: "BCODER SHOPP",
+            owner: "Cornelio Teixeira",
             receiver: values.clientName,
             price: values.price,
             quantity: values.quantity
@@ -89,21 +89,24 @@ export default function Homepage(){
         toast.success("Produto Vendido com Sucesso!")
     }
 
-    useEffect(() => {
-        async function getUserName(){
-            const user = await account.get()
-            const userNameCompost = user.email.split("@")
-            const userName = userNameCompost[0]
-            setUserName(userName)
-        }
-        getUserName()
-    },[])
+    async function handleLogoutButton(){
+        await account.deleteSession("current")
+        navigate("/login")
+    }
 
     const [productsInStock] = useProducts("products", [])
     
     return (
-        <div className="flex flex-1 w-screen h-screen">
-            <Sidebar />
+        <div className="flex flex-col flex-1 w-screen h-screen">
+            <div>
+                <header className="flex gap-4 items-center justify-between shadow-md px-8 py-2">
+                    <h1 className="text-3xl font-bold">BCoder</h1>
+                    <span onClick={handleLogoutButton} className="flex gap-1 font-medium items-center cursor-pointer">
+                            <Logout />
+                            Sair
+                    </span>
+                </header>
+            </div>
             <main className="flex flex-1 items-center justify-center">
                 <Card>
                     <CardContent>
