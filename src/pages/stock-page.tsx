@@ -30,7 +30,7 @@ export default function StockPage(){
         async function getProducts(){
             const { documents } = await database.listDocuments(
                 '6634de7500138831be5c',
-                '663fada3003b4cfa0168',
+                '667be166000c6e985adb',
                 []
             )
 
@@ -41,12 +41,12 @@ export default function StockPage(){
 
         }
         getProducts()
-    },[])
+    })
 
     return (
         <div className="w-screen h-screen flex">
             <Sidebar />
-            <main className="p-8 flex flex-col gap-10">
+            <main className="p-8 flex flex-1 flex-col gap-10">
                 <div className="flex gap-4">
                     <h1 className="font-bold text-3xl text-gray-800">Produtos Em Stock</h1>
                     <OpenDialogButtonForStock title="Cadastrar Produto"/>
@@ -105,7 +105,7 @@ function ActionButtons({productId}: ActionButtonsProps){
     async function handleDeletButtonClick(){
         await database.deleteDocument(
             '6634de7500138831be5c',
-            '663fada3003b4cfa0168',
+            '667be166000c6e985adb',
             productId
         )
     }
@@ -118,7 +118,7 @@ function ActionButtons({productId}: ActionButtonsProps){
         }
         await database.updateDocument(
             '6634de7500138831be5c',
-            '663fada3003b4cfa0168',
+            '667be166000c6e985adb',
             productId,
             data
         )

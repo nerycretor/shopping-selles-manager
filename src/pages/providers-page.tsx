@@ -56,7 +56,7 @@ export default function ProvidersPage(){
 
         await database.createDocument(
             '6634de7500138831be5c',
-            '664205300002d575cd0c',
+            '667be5bd00258703e720',
             ID.unique(),
             data
         )
@@ -68,7 +68,7 @@ export default function ProvidersPage(){
         async function getProviders(){
             const { documents } = await database.listDocuments(
                 '6634de7500138831be5c',
-                '664205300002d575cd0c',
+                '667be5bd00258703e720',
                 []
             )
 
@@ -189,7 +189,7 @@ function ProviderCard({ provider, products }: ProviderCardProps){
 
         await database.updateDocument(
             '6634de7500138831be5c',
-            '664205300002d575cd0c',
+            '667be5bd00258703e720',
             provider.$id,
             data
         )
@@ -199,7 +199,7 @@ function ProviderCard({ provider, products }: ProviderCardProps){
     async function handleProviderDeleteButton(){
         await database.deleteDocument(
             '6634de7500138831be5c',
-            '664205300002d575cd0c',
+            '667be5bd00258703e720',
             provider.$id,
         )
     }

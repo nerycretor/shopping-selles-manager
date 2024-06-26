@@ -14,7 +14,7 @@ import { Book, Logout } from "@mynaui/icons-react";
 import { ID, Query } from "appwrite";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -23,7 +23,7 @@ import { z } from "zod";
 async function updateProductQuantity(productName: string, productUnityToSell: any){
     const { documents } = await database.listDocuments(
         '6634de7500138831be5c',
-        '663fada3003b4cfa0168',
+        '667be166000c6e985adb',
         [
             Query.equal("productName",[`${productName}`])
         ]
@@ -34,14 +34,20 @@ async function updateProductQuantity(productName: string, productUnityToSell: an
     
     await database.updateDocument(
         '6634de7500138831be5c',
-        '663fada3003b4cfa0168',
+        '667be166000c6e985adb',
         productToUpdate[0].$id,
         {productUnityNumber: unityNumberToUpdate}
     )
 }
 
 export default function Attendentpage(){
+    
+    const [productPriceState, setProductPriceState] = useState("")
     const navigate = useNavigate()
+    const location = useLocation()
+
+    const userName = location.state.email.split("@")
+    const actualUserName = userName[0]
 
     const [dataToBill, setDataToBill] = useState({})
     const [isLoading, setIsLoading] = useState(false)
@@ -72,14 +78,14 @@ export default function Attendentpage(){
             productName: values.product,
             owner: "Cornelio Teixeira",
             receiver: values.clientName,
-            price: values.price,
+            price: productPriceState * values.quantity,
             quantity: values.quantity
         }
         setDataToBill(data)
 
         await database.createDocument(
             '6634de7500138831be5c',
-            '663e36b50027d4a52e7a',
+            '667bdf75001afd808e21',
             ID.unique(),
             data
         )
@@ -94,13 +100,34 @@ export default function Attendentpage(){
         navigate("/login")
     }
 
+    async function handleSetProductPrice(productName: string){
+        let productSelected = ""
+
+        if(productName == ""){
+            return
+        }else if(productName != "" && productName != productSelected) {
+            productSelected = productName
+            const {documents} = await database.listDocuments(
+                '6634de7500138831be5c',
+                '667be166000c6e985adb',
+                [
+                    Query.equal('productName', productName)
+                ]
+            )
+            const productToTakePrice = documents.map((product) => productResponseSchema.parse(product))
+            setProductPriceState(productToTakePrice[0].productPrice.toString())
+        }else{
+           return
+        }
+    }
+
     const [productsInStock] = useProducts("products", [])
     
     return (
         <div className="flex flex-col flex-1 w-screen h-screen">
             <div>
                 <header className="flex gap-4 items-center justify-between shadow-md px-8 py-2">
-                    <h1 className="text-3xl font-bold">BCoder</h1>
+                    <h1 className="text-3xl font-bold">BCoder - {actualUserName}</h1>
                     <span onClick={handleLogoutButton} className="flex gap-1 font-medium items-center cursor-pointer">
                             <Logout />
                             Sair
@@ -121,6 +148,7 @@ export default function Attendentpage(){
                                             <FormControl>
                                                 <Select
                                                     onValueChange={field.onChange}
+                                                    onOpenChange={() => handleSetProductPrice(field.value)}
                                                     value={field.value}
                                                 >
                                                     <SelectTrigger>
@@ -161,7 +189,7 @@ export default function Attendentpage(){
                                             <FormItem>
                                                 <FormLabel>Preco</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} className="w-[100px]"/>
+                                                    <Input {...field} value={productPriceState} className="w-[100px]"/>
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>

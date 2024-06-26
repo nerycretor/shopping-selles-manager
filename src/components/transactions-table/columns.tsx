@@ -9,7 +9,7 @@ export const transactionSchema = z.object({
     productName: z.string(),
     price: z.number(),
     quantity: z.number(),
-    createdAt: z.string().optional()
+    createdAt: z.string().optional().default(new Date().toLocaleDateString())
 })
 
 export type Transaction = z.infer<typeof transactionSchema>

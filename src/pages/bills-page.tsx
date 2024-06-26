@@ -55,7 +55,7 @@ function Bill({clientName, transactionType, transactionDescription, productPrice
                 </View>
                 <View style={{display: "flex",flexDirection: "row", paddingHorizontal: 48, justifyContent: "space-between"}}>
                     <Text style={{fontWeight: "bold", fontSize: 24}}>FATURA</Text>
-                    <Text>06 de Maio, 2024</Text>
+                    <Text>{new Date().toLocaleDateString()}</Text>
                 </View>
                 <View style={{display: "flex",flexDirection: "row", paddingHorizontal: 48,marginTop: 20, justifyContent: "space-between"}}>
                     <View style={{display: "flex", flexDirection: "column", gap: 8}}>
@@ -80,7 +80,7 @@ function Bill({clientName, transactionType, transactionDescription, productPrice
                     <Text>{productPrice},00</Text>
                 </View>
                 <View style={{display: "flex",flex: 1, flexDirection: "row", justifyContent: "flex-end", paddingRight: 48, marginTop: 15}}>
-                    <Text>TOTAL: {productPrice},00</Text>
+                    <Text>TOTAL: {Number(productPrice)},00</Text>
                 </View>
             </Page>
         </Document>

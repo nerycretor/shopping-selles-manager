@@ -19,30 +19,13 @@ import { z } from "zod";
 
 
 
-async function updateProductQuantity(productName: string, productUnityToSell: any){
-    const { documents } = await database.listDocuments(
-        '6634de7500138831be5c',
-        '663fada3003b4cfa0168',
-        [
-            Query.equal("productName",[`${productName}`])
-        ]
-    )
 
-    const productToUpdate = documents.map((product) => productResponseSchema.parse(product))
-    const unityNumberToUpdate = productToUpdate[0].productUnityNumber - Number(productUnityToSell)
-    
-    await database.updateDocument(
-        '6634de7500138831be5c',
-        '663fada3003b4cfa0168',
-        productToUpdate[0].$id,
-        {productUnityNumber: unityNumberToUpdate}
-    )
-}
 
 export default function Homepage(){
     const [dataToBill, setDataToBill] = useState({})
     const [userName, setUserName] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const [productPrice, setProductPrice] = useState("")
 
     const formSchema = z.object({
         id: z.string().optional(),
@@ -60,10 +43,30 @@ export default function Homepage(){
             product: "",
             clientName: "",
             quantity: 0,
-            price: 0.00,
+            price: 0,
             transactionType: "Venda"
         }
     })
+
+    async function updateProductQuantity(productName: string, productUnityToSell: any){
+        const { documents } = await database.listDocuments(
+            '6634de7500138831be5c',
+            '667be166000c6e985adb',
+            [
+                Query.equal("productName",[`${productName}`])
+            ]
+        )
+    
+        const productToUpdate = documents.map((product) => productResponseSchema.parse(product))
+        const unityNumberToUpdate = productToUpdate[0].productUnityNumber - Number(productUnityToSell)
+        
+        await database.updateDocument(
+            '6634de7500138831be5c',
+            '667be166000c6e985adb',
+            productToUpdate[0].$id,
+            {productUnityNumber: unityNumberToUpdate}
+        )
+    }
 
     async function onSubmit(values: z.infer<typeof formSchema>){
         setIsLoading(true)
@@ -72,14 +75,14 @@ export default function Homepage(){
             productName: values.product,
             owner: "BCODER SHOPP",
             receiver: values.clientName,
-            price: values.price,
+            price: values.quantity * Number(productPrice),
             quantity: values.quantity
         }
         setDataToBill(data)
 
         await database.createDocument(
             '6634de7500138831be5c',
-            '663e36b50027d4a52e7a',
+            '667bdf75001afd808e21',
             ID.unique(),
             data
         )
@@ -87,6 +90,27 @@ export default function Homepage(){
         updateProductQuantity(values.product, values.quantity)
         setIsLoading(false)
         toast.success("Produto Vendido com Sucesso!")
+    }
+
+    async function handleSetProductPrice(productName: string){
+        let productSelected = ""
+
+        if(productName == ""){
+            return
+        }else if(productName != "" && productName != productSelected) {
+            productSelected = productName
+            const {documents} = await database.listDocuments(
+                '6634de7500138831be5c',
+                '667be166000c6e985adb',
+                [
+                    Query.equal('productName', productName)
+                ]
+            )
+            const productToTakePrice = documents.map((product) => productResponseSchema.parse(product))
+            setProductPrice(productToTakePrice[0].productPrice.toString())
+        }else{
+           return
+        }
     }
 
     useEffect(() => {
@@ -118,6 +142,7 @@ export default function Homepage(){
                                             <FormControl>
                                                 <Select
                                                     onValueChange={field.onChange}
+                                                    onOpenChange={() => handleSetProductPrice(field.value)}
                                                     value={field.value}
                                                 >
                                                     <SelectTrigger>
@@ -158,7 +183,7 @@ export default function Homepage(){
                                             <FormItem>
                                                 <FormLabel>Preco</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} className="w-[100px]"/>
+                                                    <Input {...field} value={productPrice} className="w-[100px]"/>
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>

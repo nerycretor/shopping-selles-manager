@@ -66,7 +66,7 @@ export default function OpenDialogButtonForStock({title}:OpenDialogButtonProps){
 
         await database.createDocument(
             '6634de7500138831be5c',
-            '663fada3003b4cfa0168',
+            '667be166000c6e985adb',
             ID.unique(),
             data
         )
@@ -79,13 +79,13 @@ export default function OpenDialogButtonForStock({title}:OpenDialogButtonProps){
             productName: values.productName,
             owner: "Cornelio Teixeira",
             receiver: "BCoder",
-            price: values.productPrice,
+            price: values.productPrice * values.productUnityNumber,
             quantity: values.productUnityNumber
         }
 
         await database.createDocument(
             '6634de7500138831be5c',
-            '663e36b50027d4a52e7a',
+            '667bdf75001afd808e21',
             ID.unique(),
             dataToTransaction
         )

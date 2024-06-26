@@ -47,11 +47,11 @@ export default function EmployeePage(){
             setEmployees(employeesList)
         }
         getEmployees()
-    },[])
+    })
     return (
         <div className="w-screen h-screen flex flex-1">
             <Sidebar />
-            <main className="p-8 flex flex-col gap-10">
+            <main className="p-8 flex flex-1 flex-col gap-10">
                 <div className="flex gap-4">
                     <h1 className="font-bold text-3xl text-gray-800">Funcionarios</h1>
                     <Dialog>
@@ -68,7 +68,7 @@ export default function EmployeePage(){
                     </Dialog>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 scroll-auto">
                     { employees ? employees.map((employee: z.infer<typeof employeeResponseSchema>) => <EmployeeCard key={employee.$id} Employee={employee} />) : <span>No Employee</span>}
                 </div>
             </main>

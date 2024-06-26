@@ -11,19 +11,21 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Toaster } from "@/components/ui/sonner"
 import { SpokeSpinner } from "@/components/ui/spinner"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 import { z } from "zod"
 
 export function AuthPage() {
     const [isLoading, setisLoading] = useState(false)
 
     const loginFormSchema = z.object({
-        userEmail: z.string().min(4).email(),
-        userPassword: z.string().min(8)
+        userEmail: z.string().min(1).email(),
+        userPassword: z.string().min(1)
     })
 
     
@@ -41,23 +43,22 @@ export function AuthPage() {
 
     async function onSubmit(values: z.infer<typeof loginFormSchema>){
         setisLoading(true)
-        await account.createEmailPasswordSession(
-            values.userEmail,
-            values.userPassword
-        )
-        setisLoading(false)
-        try {
-            const user = await account.get() 
-            if (user.name == "Admin"){
+        try{
+            await account.createEmailPasswordSession(
+                values.userEmail,
+                values.userPassword
+            )
+            const user = await account.get()
+            if(user.name === "Admin"){
                 navigate("/")
-                return
-            }else {
-                navigate("/attendent")
-                return
+            }else{
+                navigate("/attendent", {state: {email: values.userEmail}})
             }
-        } catch (error) {
-            console.log(error)
+        }catch(error){
+            toast.error("Email ou Password Invalido")
         }
+        setisLoading(false)
+       
     }
 
     function goToHome(){
@@ -113,6 +114,7 @@ export function AuthPage() {
             <LoginForm />
         </CardContent>
         </Card>
+        <Toaster position="bottom-center" richColors/>
     </div>
   )
 }
