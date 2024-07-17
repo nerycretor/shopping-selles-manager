@@ -112,10 +112,18 @@ function ActionButtons({productId}: ActionButtonsProps){
 
     async function onSubmit(values: z.infer<typeof productditFormSchema>){
         setIsLoading(true)
+        const product = await database.getDocument(
+            '6634de7500138831be5c',
+            '667be166000c6e985adb',
+            productId,
+        )
+        const products = productResponseSchema.parse(product)
+
         const data = {
             productName: values.productName,
-            productUnityNumber: values.productUnity
+            productUnityNumber: values.productUnity + products.productUnityNumber
         }
+        console.log(data.productUnityNumber)
         await database.updateDocument(
             '6634de7500138831be5c',
             '667be166000c6e985adb',

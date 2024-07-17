@@ -31,7 +31,7 @@ export default function Homepage(){
         id: z.string().optional(),
         product: z.string().min(4).max(50),
         clientName: z.string().min(4).max(50),
-        quantity: z.coerce.number(),
+        quantity: z.coerce.number().min(1),
         price: z.coerce.number(),
         transactionType: z.string()
     })
@@ -150,7 +150,7 @@ export default function Homepage(){
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         { productsInStock ? productsInStock
-                                                            .filter((product:ProductType) => product.productUnityNumber >= 5)
+                                                            .filter((product:ProductType) => product.productUnityNumber > 5)
                                                             .map((product: ProductType) => (<SelectItem key={product.id} value={product.productName}>{product.productName}</SelectItem>)) : (<span>No Products</span>)}
                                                     </SelectContent>
                                                 </Select>

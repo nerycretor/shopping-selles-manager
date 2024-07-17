@@ -1,4 +1,4 @@
-import { account, database } from "@/appwrite/appwrite";
+import { account, client, database } from "@/appwrite/appwrite";
 import Sidebar from "@/components/sidebar/sidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -235,14 +235,26 @@ function EmployeeCard({Employee}: EmployeeProps){
             employeeRole: values.employeeRole,
             employeePassword: values.employeePassword
         }
+        const user = await database.getDocument(
+            '6634de7500138831be5c',
+            '665494910029404d6608',
+            Employee.$id
+        )
+        console.log(user)
 
-        await database.updateDocument(
+        await database.deleteDocument(
             '6634de7500138831be5c',
             '665494910029404d6608',
             Employee.$id,
+        )
+        await database.createDocument(
+            '6634de7500138831be5c',
+            '665494910029404d6608',
+            ID.unique(),
             data
         )
         setIsLoading(false)
+
     }
     async function handleDeleteButtonClick(){
         await database.deleteDocument(
